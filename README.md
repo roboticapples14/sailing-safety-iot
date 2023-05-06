@@ -1,4 +1,4 @@
-# Sailing Safety Device
+# Sailing Safety Service
 
 ## Description
 This sailing safety project was developed for sailing clubs and harbors who could benefit from a line of communication between the harbor and boats on the water. Our hope is that this communication channel will allow harbor staff to respond to sailing hazards like capsizing, drowning, and collisions much faster and more effectively. The on-boat device and man overboard devices allow for sailors to send SOS and man overboard alerts to the harbor, as well as passively transmitting crucial data like location and water choppiness to the harbor. Communication from the harbor to the boats is facilitated by sending a message on the web app, which will be displayed on the LCD on the boat.
