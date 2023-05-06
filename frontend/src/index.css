@@ -1,0 +1,53 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sail&display=swap');
+body {
+  font-family: 'Lato', sans-serif;
+}
+
+/* Colors */
+:root {
+  --primary-color: #00a8ff;
+  --secondary-color: #008dc4;
+  --accent-color: #e67e22;
+  --text-color: #333;
+  --white: #FAFAFA;
+  --dark: #3d73a3;
+}
+
+
+
+body {
+  margin: 0;
+  background-color: var(white);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+#sendButton {
+	background: #4c748d;
+	color: #fff;
+	border: 1px solid #eee;
+	border-radius: 20px;
+	box-shadow: 1px 1px 1px #eee;
+	text-shadow: none;
+}
+
+#sendButton:hover {
+	background: #3e5e72;
+	color: #fff;
+	border: 1px solid #eee;
+	border-radius: 20px;
+	box-shadow: 2px 2px 2px #eee;
+	text-shadow: none;
+}
