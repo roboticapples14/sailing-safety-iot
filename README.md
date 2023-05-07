@@ -17,3 +17,11 @@ For information on replicating and running the web app, see frontend/README.md
 * Adam Peter Balogh
 * Karolina Jadwiga Jablonska
 * Marco Persico
+
+##Libs Used
+#On Boat Device
+- mikalhart/TinyGPSPlus@^1.0.3
+- jpmeijers/RN2xx3 Arduino Library@^1.0.1
+- adafruit/Adafruit MPU6050@^2.2.4
+- adafruit/Adafruit SH110X@^2.1.8
+- marcoschwartz/LiquidCrystal_I2C@^1.1.4
