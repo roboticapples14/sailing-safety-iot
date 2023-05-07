@@ -169,6 +169,8 @@ void loop() {
 }
 
 
+
+void construct_payload(float x, float y, int sos, bool mob, int acc, int bat) {
 /*
 :param x: float - latitude coordinate
 :param y: float - longitude coordinate
@@ -176,7 +178,6 @@ void loop() {
 :param acc: int - 0-7
 :param bat: int - 0-4
 */
-void construct_payload(float x, float y, int sos, bool mob, int acc, int bat) {
   uint8_t *pla;
   uint8_t *plo;
 
@@ -261,6 +262,9 @@ String bytearray_to_base64(uint8_t* data, size_t len) {
 /* ###################################################################################################### */
 
 void initialize_LoRaWAN()
+/*
+Initializes LoraWAN and closes serial communcation afterwards
+*/
 {
   LoRaSerial.begin(57600);
   //reset RN2xx3
@@ -297,11 +301,12 @@ void initialize_LoRaWAN()
   Serial.println("- Trying to join TTN");
   bool join_result = false;
   join_result = myLora.initOTAA(App_EUI, App_Key, Dev_EUI);
-
+  
+  //If cannot join, try again every 5 seconds until success
   while(!join_result)
   {
     Serial.println("- No Connection Established");
-    delay(1000); //delay 5s before retry
+    delay(5000); //delay 5s before retry
     join_result = myLora.initOTAA(App_EUI, App_Key, Dev_EUI);
   }
   
@@ -486,6 +491,9 @@ bool MOBreceived(){
 }
 
 void handleGPS()
+/*
+Unpacks gps data and reassigns latests gps data to longitude and lattitude variables.
+*/
 {
   Serial.print(F("Location: ")); 
   if (gps.location.isValid())
@@ -505,6 +513,9 @@ void handleGPS()
   }
 
   void GPSLoop(){
+    /*
+    Checks if there are any avaivable data for the gps object and if data can be encoded
+    */
     while (GPSSerial.available() > 0){
       yield();
       if (gps.encode(GPSSerial.read())){
