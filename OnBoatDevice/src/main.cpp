@@ -5,18 +5,11 @@
 #include <Adafruit_MPU6050.h> // Accelometer
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH110X.h> // OLED
 #include <LiquidCrystal_I2C.h>
 
 #define RESET 15
 #define FREQ 866000000 //this frequency allows a duty cicle of 1%
 #define WATCHDOG 1000
-
-//#define i2c_Address 0x3c
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
-#define OLED_RESET -1
 #define i2c_Address 0x27
 
 SoftwareSerial GPSSerial(0, 2);  //GPS module connections2 = 3 = D3 -> Tx, D4 -> Rx
@@ -59,7 +52,6 @@ int waveLevel = 0;
 long lastDisplayTime;     
 long period = 20000;       //currently gives result every 3 sec, 30-60 sec would be more reasonable IRL
 
-Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 const int sosButton = 16;  // D0
 
 // LCD params
@@ -82,9 +74,7 @@ void messagesHandler();
 void sosSignalDisplay(int isOn);
 void displayBatteryAndWaveLevel();
 void sosSignalHandler();
-void displayHandler();
 void displaySetup();
-void locationDisplayHandler(float lat, float lng);
 void initGY521();
 void measureRotation();
 void displayRotation(float x, float y, float z);
@@ -109,7 +99,7 @@ void setup() {
   //Be aware that all other serial communcations are only opened when needed, because
   //When all serial connections were opened at the same time, there would be a thread overload
   Serial.begin(9600);
-  displaySetup();             // OLED setup
+  displaySetup();
   digitalWrite(sosButton, LOW);
   pinMode(sosButton, INPUT);  // SOS setup
   Serial.print("button level: ");
@@ -149,7 +139,7 @@ void loop() {
   measureRotation();
   GPSSerial.end();
   if(!messageReceived){
-    locationDisplayHandler(latitude, longitude);
+    displaySensorsData();
   }
   delay(10000); 
 
@@ -163,8 +153,8 @@ void loop() {
   recv = myLora.getRx();
   Serial.print("received message ");
   Serial.println(recv);
-  if(recv!=""){
-    downlink=recv;
+  if(recv != ""){
+    downlink = recv;
   }
   Serial.print("downlink message ");
   Serial.println(downlink);
@@ -515,7 +505,6 @@ void handleGPS()
   }
 
   void GPSLoop(){
-    //Serial.println("GPS process in progress");
     while (GPSSerial.available() > 0){
       yield();
       if (gps.encode(GPSSerial.read())){
@@ -531,24 +520,8 @@ void handleGPS()
 
 void displaySetup() {
   delay(250);
-  // display.begin(i2c_Address, true);
-  // display.clearDisplay(); // Clear the buffer.
-  
-  // for liquidcrystal 16x2 display
-  lcd.init();
-  // turn on LCD backlight                      
+  lcd.init();                    
   lcd.backlight();
-}
-
-// TODO: take parameters + display rotation level 
-void displayHandler() {
-  //dateAndTimeDisplayHandler();
-  // locationDisplayHandler(55.123456, 12.123456);
-  messagesHandler();
-  // sosSignalDisplay(sosSignal);
-  // batteryDisplayHandler(2);
-
-  
 }
 
 void sosSignalHandler() {
@@ -557,29 +530,31 @@ void sosSignalHandler() {
     sosSignal = !sosSignal;
     Serial.print("SOS turned ");
     if(sosSignal){
-      Serial.println("on");
-      lcd.print("Sending SOS")
+      lcd.print("Sending SOS");
     } else {
-      Serial.println("off");
-      lcd.print("SOS cancelled")
+      lcd.print("SOS cancelled");
     }
     Serial.println(sosSignal);
     delay(500);
-  } else if(!messageReceived){
-    displayBatteryAndWaveLevel();
   }
 }
 
-void displayBatteryAndWaveLevel() {
+void displaySensorsData() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Wave Level: ");
-  lcd.setCursor(12, 0);
+  lcd.print("Waves: ");
+  lcd.setCursor(6, 0);
   lcd.print(waveLevel);
-  lcd.setCursor(0, 1);
-  lcd.print("Battery: ");
-  lcd.setCursor(12, 0);
+  lcd.setCursor(8, 0);
+  lcd.print("Bat: ");
+  lcd.setCursor(14, 0);
   lcd.print(batteryLevel + 1);
+  lcd.setCursor(0, 1);
+  lcd.print("GPS: ");
+  lcd.setCursor(7, 1);
+  lcd.print(latitude);
+  lcd.setCursor(12, 1);
+  lcd.print(longitude);
 }
 
 void measureBattery(){
@@ -591,51 +566,28 @@ void measureBattery(){
 }
 
 void messagesHandler() {
-
-  // set cursor to first column, first row
   lcd.clear();
-  lcd.setCursor(0, 0);
-  Serial.println("we are in the function");
-  Serial.println(downlink);
-  if(downlink.indexOf("00")==0) {
+  lcd.setCursor(0, 0);  // set cursor to first column, first row
+  if(downlink.indexOf("00") == 0) {
       lcd.print("! GO BACK !");
-      Serial.println("go back");
-      messageReceived=true;
+      messageReceived = true;
   }
-  else if(downlink.indexOf("01")==0){
+  else if(downlink.indexOf("01") == 0){
     lcd.print("! STORM ALERT !");
-    Serial.println("storm");
-    messageReceived=true;
+    messageReceived = true;
   }
-  else if(downlink.indexOf("02")==0){
+  else if(downlink.indexOf("02") == 0){
     lcd.print("! STRONG WIND !");
-    Serial.println("wind");
-    messageReceived=true;
+    messageReceived = true;
   }
-  else if(downlink.indexOf("03")==0){
+  else if(downlink.indexOf("03") == 0){
     lcd.print("!BOAT CLEARANCE!");
-    Serial.println("boat clearance");
-    messageReceived=true;
+    messageReceived = true;
   }
   else{
     lcd.print("NO MESSAGES");
-    messageReceived=false;
+    messageReceived = false;
   }
-}
-
-// TODO: maybe we could calculate pixels instead of harcoding.
-void locationDisplayHandler(float lat, float lng) {
-  //display.setCursor(0, 15);
-  //display.setTextColor(SH110X_WHITE);
-  //display.println("Lat: ");
-  //display.setCursor(30, 15);
-  //display.print(lat);
-  //display.setCursor(0, 25);
-  //display.println("Lng: ");
-  //display.setCursor(30, 25);
-  //display.println(lng);
-  //display.display();
-
 }
 
 void initGY521(){
@@ -645,7 +597,7 @@ void initGY521(){
   }
   Serial.println("MPU6050 Found!");
 
-  //sensor setup, these were the default values
+  //sensor setup
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
@@ -655,7 +607,6 @@ void initGY521(){
 }
 
 void measureRotation(){
-  //no function to just read one type
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
@@ -669,8 +620,8 @@ void measureRotation(){
     waveLevel = SENSITIVITY * (totalX + totalY + totalZ) / count;
     waveLevel = waveLevel <= MAX_LEVEL ? waveLevel : MAX_LEVEL;   //caps waveLevel at 7(or whatever is given) (anything above is completely unreasonable for water movement)
     displayRotation(totalX / count, totalY / count, totalZ / count);  //displays data for testing
-    //Serial.println(waveLevel);
-    //reseting values
+    
+    // reseting values
     lastDisplayTime = currentTime;
     totalX = 0;
     totalY = 0;
