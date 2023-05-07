@@ -18,7 +18,7 @@ For information on replicating and running the web app, see frontend/README.md
 * Karolina Jadwiga Jablonska
 * Marco Persico
 
-## Libs Used
+## Libraries Used
 # On Boat Device
 - mikalhart/TinyGPSPlus@^1.0.3
 - jpmeijers/RN2xx3 Arduino Library@^1.0.1
