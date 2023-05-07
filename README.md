@@ -30,3 +30,5 @@ For information on replicating and running the web app, see frontend/README.md
 - adafruit/Adafruit MPU6050@^2.2.4
 - adafruit/Adafruit SH110X@^2.1.8
 - marcoschwartz/LiquidCrystal_I2C@^1.1.4
+## Man overboard device
+- jpmeijers/RN2xx3 Arduino Library@^1.0.1
