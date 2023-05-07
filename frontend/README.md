@@ -32,7 +32,8 @@ The data contains:
 - Battery level
 
 **Data flow** \
-![uplink](https://user-images.githubusercontent.com/38289305/235317986-ad731d7f-25bd-4430-93e7-b1e64e62ec73.png)
+![web_app_GET](https://user-images.githubusercontent.com/38289305/236691170-5763a3ef-486a-46b8-883b-fa7089193cc8.png)
+
 
 ### Downlink messages
 The application provides a functionality to send downlink message to the boat.
@@ -43,5 +44,6 @@ This is done using HTTP POST method. The user can select from the four fiven mes
 - Boat clearance 
 
 **Data flow** \
-![downlink](https://user-images.githubusercontent.com/38289305/235318000-50906f42-18a8-47b5-998c-80e16fcc36a0.png)
+![web_app_POST](https://user-images.githubusercontent.com/38289305/236691177-b6139823-e158-4e44-bb86-c18f18b23263.png)
+
 
